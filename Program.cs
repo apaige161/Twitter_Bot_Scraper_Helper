@@ -11,6 +11,7 @@ using Tweetinvi.Parameters;
 using System.Diagnostics;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
+using Tweetinvi.Core.Extensions;
 
 namespace TwitterBotDotNetScraperHelper
 {
@@ -18,6 +19,11 @@ namespace TwitterBotDotNetScraperHelper
     {
         static void Main(string[] args)
         {
+
+            //having issues getting rid of single quotes
+
+
+
             //login
             //read passwords from file here using your own file path
 
@@ -54,7 +60,7 @@ namespace TwitterBotDotNetScraperHelper
             //post news headline now from scrapped website
             while (true)
             {
-                //post news headline (popular) now from scrapped website
+                //post news headline (popular starts at newsList[0], latest starts at newsList[9]) now from scrapped website
 
                 //add time
                 DateTime currentTime = DateTime.Now;
@@ -85,31 +91,117 @@ namespace TwitterBotDotNetScraperHelper
                     index++;
                 }
 
-                //post articles
-                //TODO: grab all uppercase letters of the new article and add that word as a hastag
-                //TODO: Post a random article out of the top few articles
+                //grabs article to post
+                string articleToPost = newsList[0];
+
+                //Post a random article out of the top few articles
+                Random randomArticle = new Random();
+                articleToPost = newsList[randomArticle.Next(15)];
+
+                //print the random article in blue 
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine(articleToPost);
+                Console.ResetColor();
+
+
+                //grab all uppercase letters of the new article and add that word as a hastag
+                string[] split = articleToPost.Split(' ');
+                string[] listOfHashtags = new string[split.Length];
+                for (int i = 0; i < split.Length; i++)
+                {
+                    if(split[i].Any(char.IsUpper))
+                    {
+                        listOfHashtags[i] = "#" + split[i] + " ";
+                        //Console.WriteLine(split[i]);
+                    }
+                }
+                //join the list together
+                string generatedHashTags = string.Join("", listOfHashtags);
+                //Console.WriteLine(generatedHashTags);
+
+                //replace quotes and special char
+                //fixed formatting issues but need to refactor LATER
+                string cleanHashtags = generatedHashTags.Replace("’", "");
+                string cleanHashtags1 = cleanHashtags.Replace("‘", "");
+                string cleanHashtags2 = cleanHashtags1.Replace("'", "");
+
+
+
+
+
+                //turns the text into just the quote and puts it into a string with no spaces
+
+                //grab text inside quotes, join them as a string in a single word
+                string[] splitArticle = articleToPost.Split('‘');
+                string[] splitIntoQuotes = new string[splitArticle.Length];
+
+                //need conditional if inside quotes, 
+                //do something
+                Console.WriteLine(splitArticle[0]);
+                
+                
+                if(splitArticle[0] != null)
+                {
+                    Console.WriteLine(splitArticle[0]);
+                }
+                if (splitArticle[1] != null)
+                {
+                    Console.WriteLine(splitArticle[1]);
+                }
+
+                /*
+                for (int i = 0; i < splitArticle.Length; i++)
+                {
+                    //print
+                    splitIntoQuotes[i] = splitArticle[i];
+                    Console.WriteLine(splitIntoQuotes[i] + "zzz");
+
+                }
+                */
+
+                //join the list together
+                //string generatedHashTags = string.Join("", splitIntoQuotes);
+
+
+
+
+
+
+
+                Console.ReadLine();
+
+
+
+
+
+
+
 
                 //Print hashtags to be posted
-                string input = newsList[9];
+                string input = articleToPost;
                 string firstWordOfArticle = input.Substring(0, input.IndexOf(" ")); // Result is "first word of article"
-                string allHashtags = $"#Engadget #ProjectWebScrape #{firstWordOfArticle}";
-                string textToTweet = $"TOP STORY: { input } {allHashtags}";
+                string engadgetHashtags = $"#Engadget #ProjectWebScrape";
+                Console.ForegroundColor = ConsoleColor.Green;
+                string textToTweet = $"TOP STORY: { input } \n { engadgetHashtags } { cleanHashtags2 }";
+                Console.ResetColor();
                 Console.WriteLine("\n");
-                Console.WriteLine($"Story to Publish: {textToTweet}");
+                Console.WriteLine($"Story to Publish: { textToTweet }");
 
                 //shows dynamic hashtags
                 Console.Write($"The Hashtags being sent with the tweet: ");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"{allHashtags}");
+                Console.WriteLine($"{ engadgetHashtags } { cleanHashtags2 }");
                 Console.ResetColor();
 
-                //post a tweet
+                
+                //post a tweet of latest news story
+                    //this is here to post as soon as the program runs
                 Tweet.PublishTweet(textToTweet);
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("First TOP STORY posted");
                 Console.ResetColor();
-
-                TextWorker(newTime, currentTime, textToTweet);
+                
+                Wait(newTime, currentTime);
                 
 
                 //wait and run again
@@ -121,15 +213,10 @@ namespace TwitterBotDotNetScraperHelper
 
 
             }//end of while loop
-           
-
-
-
-
 
         }//end of main
 
-        public static void TextWorker(DateTime newTime, DateTime currentTime, string textToTweet)
+        public static void Wait(DateTime newTime, DateTime currentTime)
         {
             //datetime compare for while loop
             int timeCompare = DateTime.Compare(newTime, currentTime);
@@ -143,7 +230,7 @@ namespace TwitterBotDotNetScraperHelper
             //waits until addTime is later than currentTime
             while (timeCompare > 0)
             {
-                //end while loop, should end when timeCompare is changed
+                
                 Console.WriteLine("It is not time to post yet, the program will try again in 60 seconds...");
                 Thread.Sleep(60000);   //wait for 60 seconds
                 timeCompare = DateTime.Compare(newTime, DateTime.Now);
@@ -152,14 +239,36 @@ namespace TwitterBotDotNetScraperHelper
                 //runs program after while loop completes
                 if (timeCompare < 0) //currentTime is later than addTime
                 {
+                    /*
                     //post a tweet
                     Tweet.PublishTweet(textToTweet);
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("First TOP STORY posted");
                     Console.ResetColor();
+                    */
                     break;
                 }
             }
         } //tweet text
+
+        public static void ArticleInQuotesHashtag (string _articleToPost)
+        {
+            //grab text inside quotes, join them as a string in a single word
+            string[] split = _articleToPost.Split(' ');
+            string[] splitIntoQuotes = new string[split.Length];
+
+            //need conditional if inside quotes, 
+                //do something
+
+            for (int i = 0; i < split.Length; i++)
+            {
+                //print
+                Console.WriteLine(splitIntoQuotes[i]);
+                
+            }
+            //join the list together
+            //string generatedHashTags = string.Join("", splitIntoQuotes);
+        }
     }
+
 }
