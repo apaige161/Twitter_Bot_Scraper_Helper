@@ -19,7 +19,10 @@ namespace TwitterBotDotNetScraperHelper
     {
         static void Main(string[] args)
         {
-
+            //uninstall nuGet package agilityPack
+            //reinstall
+            //go to solution explorer > Properties > (delete) AssemblyInfo.cs
+            //build solution
 
 
             //login
