@@ -20,8 +20,6 @@ namespace TwitterBotDotNetScraperHelper
         static void Main(string[] args)
         {
 
-            //having issues getting rid of single quotes
-
 
 
             //login
@@ -56,7 +54,8 @@ namespace TwitterBotDotNetScraperHelper
             Console.WriteLine("\n");
 
 
-            Console.WriteLine("This program will post results and then post the new results every 4 hours");
+            Console.WriteLine("This program will post results and then post the new results every 4 minutes");
+
             //post news headline now from scrapped website
             while (true)
             {
@@ -91,7 +90,7 @@ namespace TwitterBotDotNetScraperHelper
                     index++;
                 }
 
-                //grabs article to post
+                //default article to post
                 string articleToPost = newsList[0];
 
                 //Post a random article out of the top few articles
@@ -127,62 +126,27 @@ namespace TwitterBotDotNetScraperHelper
 
 
 
-
-
-                //turns the text into just the quote and puts it into a string with no spaces
-
-                //grab text inside quotes, join them as a string in a single word
-                string[] splitArticle = articleToPost.Split('‘');
-                string[] splitIntoQuotes = new string[splitArticle.Length];
-
-                //need conditional if inside quotes, 
-                //do something
-                Console.WriteLine(splitArticle[0]);
-                
-                
-                if(splitArticle[0] != null)
-                {
-                    Console.WriteLine(splitArticle[0]);
-                }
-                if (splitArticle[1] != null)
-                {
-                    Console.WriteLine(splitArticle[1]);
-                }
-
+                //TODO: LATER: turns the text into just the quote 
                 /*
-                for (int i = 0; i < splitArticle.Length; i++)
+                string[] resultApostStart = articleToPost.Split('‘');
+                if(resultApostStart[1] != null)
                 {
-                    //print
-                    splitIntoQuotes[i] = splitArticle[i];
-                    Console.WriteLine(splitIntoQuotes[i] + "zzz");
-
+                    Console.WriteLine(resultApostStart[1]);
                 }
+                
+                string[] resultApostEnd = articleToPost.Split('’');
+
+
+                //and puts it into a string with no spaces
                 */
-
-                //join the list together
-                //string generatedHashTags = string.Join("", splitIntoQuotes);
-
-
-
-
-
-
-
-                Console.ReadLine();
-
-
-
-
-
-
 
 
                 //Print hashtags to be posted
-                string input = articleToPost;
-                string firstWordOfArticle = input.Substring(0, input.IndexOf(" ")); // Result is "first word of article"
+                //string input = articleToPost;
+                //string firstWordOfArticle = input.Substring(0, input.IndexOf(" ")); // Result is "first word of article"
                 string engadgetHashtags = $"#Engadget #ProjectWebScrape";
                 Console.ForegroundColor = ConsoleColor.Green;
-                string textToTweet = $"TOP STORY: { input } \n { engadgetHashtags } { cleanHashtags2 }";
+                string textToTweet = $"TOP STORY: { articleToPost } \n { engadgetHashtags } { cleanHashtags2 }";
                 Console.ResetColor();
                 Console.WriteLine("\n");
                 Console.WriteLine($"Story to Publish: { textToTweet }");
@@ -194,7 +158,7 @@ namespace TwitterBotDotNetScraperHelper
                 Console.ResetColor();
 
                 
-                //post a tweet of latest news story
+                //post the news story
                     //this is here to post as soon as the program runs
                 Tweet.PublishTweet(textToTweet);
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -210,6 +174,7 @@ namespace TwitterBotDotNetScraperHelper
                 
 
                 
+
 
 
             }//end of while loop
