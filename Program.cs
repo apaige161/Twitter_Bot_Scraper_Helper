@@ -28,7 +28,7 @@ namespace TwitterBotDotNetScraperHelper
             //login
             //read passwords from file here using your own file path
 
-            string pathOfApiKeys = @".\api_keys.txt";
+            string pathOfApiKeys = $@".{Path.DirectorySeparatorChar}api_keys.txt";
             //read file and put contents into array
             string[] allKeys = File.ReadAllLines(pathOfApiKeys);
 
@@ -126,6 +126,8 @@ namespace TwitterBotDotNetScraperHelper
                 string cleanHashtags = generatedHashTags.Replace("’", "");
                 string cleanHashtags1 = cleanHashtags.Replace("‘", "");
                 string cleanHashtags2 = cleanHashtags1.Replace("'", "");
+                string cleanHashtags3 = cleanHashtags2.Replace("&", "");
+                string cleanHashtags4 = cleanHashtags3.Replace("-", "");
 
 
 
@@ -149,7 +151,7 @@ namespace TwitterBotDotNetScraperHelper
                 //string firstWordOfArticle = input.Substring(0, input.IndexOf(" ")); // Result is "first word of article"
                 string engadgetHashtags = $"#Engadget #ProjectWebScrape";
                 Console.ForegroundColor = ConsoleColor.Green;
-                string textToTweet = $"TOP STORY: { articleToPost } \n { engadgetHashtags } { cleanHashtags2 }";
+                string textToTweet = $"TOP STORY: { articleToPost } \n { engadgetHashtags } { cleanHashtags4 }";
                 Console.ResetColor();
                 Console.WriteLine("\n");
                 Console.WriteLine($"Story to Publish: { textToTweet }");
@@ -157,7 +159,7 @@ namespace TwitterBotDotNetScraperHelper
                 //shows dynamic hashtags
                 Console.Write($"The Hashtags being sent with the tweet: ");
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"{ engadgetHashtags } { cleanHashtags2 }");
+                Console.WriteLine($"{ engadgetHashtags } { cleanHashtags4 }");
                 Console.ResetColor();
 
                 
