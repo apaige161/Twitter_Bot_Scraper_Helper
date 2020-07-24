@@ -31,10 +31,16 @@ namespace TwitterBotDotNetScraperHelper
 
 
             Console.WriteLine("This program will post results and then post the new results every 4 minutes");
+            int numOfArticlesPosted = 0;
 
             //post news headline now from scrapped website
             while (true)
             {
+                if(numOfArticlesPosted == 0)
+                {
+                    Console.WriteLine($"Number of articles posted is {numOfArticlesPosted}");
+                }
+                
                 //post news headline (popular starts at newsList[0], latest starts at newsList[9]) now from scrapped website
                 //add time
                 DateTime currentTime = DateTime.Now;
@@ -45,6 +51,9 @@ namespace TwitterBotDotNetScraperHelper
 
                 //scrape data
                 ScrapeAndPostRandomArticleFromEngadget();
+                numOfArticlesPosted++;
+                Console.WriteLine($"Number of articles posted in this instance is {numOfArticlesPosted}");
+                Console.WriteLine($"\n");
                 Console.WriteLine("Program will run again in 4 minutes");
                 Wait(newTime, currentTime);
 
@@ -168,55 +177,46 @@ namespace TwitterBotDotNetScraperHelper
 
             //default article to post
             string articleToPost = newsList[0];
-
+            
             //Post a random article out of the top few articles
             Random randomArticle = new Random();
             articleToPost = newsList[randomArticle.Next(15)];
-
+            articleToPost = newsList[10];
             //print the random article in blue 
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine(articleToPost);
+
+            //get rid of weird &#039; thing in scraped articles
+            string cleanArticle = articleToPost.Replace("&#039;", "");
+
+            Console.WriteLine(cleanArticle);
             Console.ResetColor();
 
 
             //grab all uppercase letters of the new article and add that word as a hastag
-            string[] split = articleToPost.Split(' ');
+            string[] split = cleanArticle.Split(' ');
             string[] listOfHashtags = new string[split.Length];
             for (int i = 0; i < split.Length; i++)
             {
                 if (split[i].Any(char.IsUpper))
                 {
                     listOfHashtags[i] = "#" + split[i] + " ";
-                    //Console.WriteLine(split[i]);
+
                 }
             }
+            
             //join the list together
             string generatedHashTags = string.Join("", listOfHashtags);
-            //Console.WriteLine(generatedHashTags);
 
-            //replace quotes and special char
-            //fixed formatting issues but need to refactor LATER
-            string cleanHashtags = generatedHashTags.Replace("’", "");
-            string cleanHashtags1 = cleanHashtags.Replace("‘", "");
-            string cleanHashtags2 = cleanHashtags1.Replace("'", "");
-            string cleanHashtags3 = cleanHashtags2.Replace("&", "");
-            string cleanHashtags4 = cleanHashtags3.Replace("-", "");
-            string cleanHashtags5 = cleanHashtags4.Replace("&#039;", "");
-
-
-
+            string cleanHashtags = generatedHashTags.Replace("’", "")
+                                                    .Replace("‘", "")
+                                                    .Replace("'", "")
+                                                    .Replace("-", "");
+                                                    
             //TODO: LATER: turns the text into just the quote 
-            /*
-            
-            */
 
-
-            //Print hashtags to be posted
-            //string input = articleToPost;
-            //string firstWordOfArticle = input.Substring(0, input.IndexOf(" ")); // Result is "first word of article"
             string engadgetHashtags = $"#Engadget #ProjectWebScrape";
             Console.ForegroundColor = ConsoleColor.Green;
-            string textToTweet = $"TOP STORY: { articleToPost } \n { engadgetHashtags } { cleanHashtags5 }";
+            string textToTweet = $"TOP STORY: { cleanArticle } \n { engadgetHashtags } { cleanHashtags }";
             Console.ResetColor();
             Console.WriteLine("\n");
             Console.WriteLine($"Story to Publish: { textToTweet }");
@@ -224,7 +224,7 @@ namespace TwitterBotDotNetScraperHelper
             //shows dynamic hashtags
             Console.Write($"The Hashtags being sent with the tweet: ");
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"{ engadgetHashtags } { cleanHashtags4 }");
+            Console.WriteLine($"{ engadgetHashtags } { cleanHashtags }");
             Console.ResetColor();
 
 
@@ -232,9 +232,13 @@ namespace TwitterBotDotNetScraperHelper
             //this is here to post as soon as the program runs
             Tweet.PublishTweet(textToTweet);
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("First TOP STORY posted");
+            Console.WriteLine("STORY posted");
             Console.ResetColor();
+            Console.WriteLine("\n");
+            
+
         }
+
     }
 
 }
