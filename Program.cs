@@ -210,6 +210,7 @@ namespace TwitterBotDotNetScraperHelper
             string cleanHashtags = generatedHashTags.Replace("’", "")
                                                     .Replace("‘", "")
                                                     .Replace("'", "")
+                                                    .Replace(",", "")
                                                     .Replace("-", "");
                                                     
             //TODO: LATER: turns the text into just the quote 
